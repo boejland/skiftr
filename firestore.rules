@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /waitlist/{entry} {
+      // Alle må skrive en ny tilmelding (fra formularen på siden)
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'role'])
+                    && request.resource.data.name is string
+                    && request.resource.data.email is string;
+      // Ingen kan læse, ændre eller slette tilmeldinger direkte fra klienten —
+      // du ser listen i Firebase Console (Firestore Database) som ejer af projektet.
+      allow read, update, delete: if false;
+    }
+  }
+}
